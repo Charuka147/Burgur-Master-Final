@@ -61,11 +61,11 @@ function generatePDF() {
             margin: { top: 0, left: 0 }
         },
         business: {
-            name: "S&D Burgers",
-            address: "No 115, New City, Halphathota, Baddegama",
-            phone: "(+94) 070 2786812",
-            email: "SDBurgers@gmail.com",
-            website: "www.S&DBurgers.com"
+            name: "Burger Master",
+            address: "No.314/7, Kandy Road, Ja-Ella",
+            phone: "(+94) 076 855 6123",
+            email: "BurgerMaster12@gmail.com",
+            website: "www.BurgerMasters.com"
         },
         contact: {
             label: `Bill for:  ${customerName}\nOrder ID: ${orderId}\nNet Total: ${netTotal.toFixed(2)}\n `

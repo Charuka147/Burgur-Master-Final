@@ -355,6 +355,33 @@ if (!localStorage.getItem('burgerData')) {
     localStorage.setItem('burgerData', JSON.stringify(initialBurgerData));
 }
 
+    //----------------Display Burger Data Table--------------------------------------------------------------
+function displayBurgerData() {
+    const burgerData = JSON.parse(localStorage.getItem('burgerData')) || [];
+    const tableBody = document.getElementById("burgerTableBody");
+    
+    tableBody.innerHTML = "";
+    burgerData.forEach((burger, index) => {
+        const row = tableBody.insertRow();
+        row.insertCell(0).textContent = burger.itemCode;
+        row.insertCell(1).textContent = burger.itemName;
+        row.insertCell(2).textContent = burger.price;
+        row.insertCell(3).textContent = burger.Qty;
+        if(burger.discount==0){
+            row.insertCell(4).textContent = '-';
+        }else{
+            row.insertCell(4).textContent = burger.discount;
+        }
+        const editCell = row.insertCell(5);
+        editCell.innerHTML = `<button class="edit-button" onclick="editItem(${index})">Edit</button>`;
+        const buyCell = row.insertCell(6);
+        buyCell.innerHTML = `<button class="buy-button" onclick="buyItem('${burger.itemCode}', '${burger.price}', '${burger.discount}')">Buy Now</button>`;
+        const deleteCell = row.insertCell(7);
+        deleteCell.innerHTML = `<button class="delete-button" onclick="deleteItem(${index})">Delete</button>`;
+    });
+}
+if(document.getElementById("burgerTableBody") !=null){displayBurgerData();}
+
     //--------------------------------Display Beverage Date Table--------------------------------------
 function displayBeveragesData(){
     const beveragesData = JSON.parse(localStorage.getItem('Beverages')) || [];
@@ -499,6 +526,14 @@ function displaySubmarineData(){
 
 }
 if(document.getElementById("SubmarineTableBody") !=null){displaySubmarineData();}
+//-------------------------------Edit Buttons Funtion---------------------------------------------
+    //-------------------------Edit Burger-----------------------------------------------------
+function editItem(index) {
+    const burgerData = JSON.parse(localStorage.getItem('burgerData')) || [];
+    const item = burgerData[index];
+
+    window.location.href = `updateitem.html?itemCode=${encodeURIComponent(item.itemCode)}&price=${encodeURIComponent(item.price)}&discount=${encodeURIComponent(item.discount)}`;
+}
 
     //-------------------Edit Berverge--------------------------------------------------------
 function editBeverage(index) {
@@ -529,6 +564,21 @@ function editSubmarine(index) {
     const submarineData = JSON.parse(localStorage.getItem('SubmarineData')) || [];
     const item = submarineData[index];
     window.location.href = `updateitem.html?itemCode=${encodeURIComponent(item.itemCode)}&price=${encodeURIComponent(item.price)}&discount=${encodeURIComponent(item.discount)}`;
+}
+
+//-------------------------------------Delete Buttons Funtion-----------------------------------------------
+    //----------------------------Delete Burger------------------------------------------------------
+function deleteItem(index) {
+    const burgerData = JSON.parse(localStorage.getItem('burgerData')) || [];
+    
+    if (index > -1 && index < burgerData.length) {
+        burgerData.splice(index, 1); 
+        localStorage.setItem('burgerData', JSON.stringify(burgerData));
+        displayBurgerData(); 
+        alert("Item deleted successfully.");
+    } else {
+        alert("Invalid item index.");
+    }
 }
     //----------------Delete Beverage--------------------------------------------------------------
 function deleteBeverage(index) {
@@ -572,59 +622,117 @@ function deleteSubmarine(index) {
 function deleteFry(index) {
     const friesData= JSON.parse(localStorage.getItem('FriesData')) || [];
      
-     if (index > -1 && index < friesData.length) {
-         friesData.splice(index, 1); 
-         localStorage.setItem('FriesData', JSON.stringify(friesData));
-         displayFriesData(); 
-         alert("Item deleted successfully.");
-     } else {
+    if (index > -1 && index < friesData.length) {
+        friesData.splice(index, 1); 
+        localStorage.setItem('FriesData', JSON.stringify(friesData));
+        displayFriesData(); 
+        alert("Item deleted successfully.");
+    } else {
          alert("Invalid item index.");
-     }
+    }
  }
+     //----------------Delete Pasta--------------------------------------------------------------
  function deletePasta(index) {
     const pastaData= JSON.parse(localStorage.getItem('PastaData')) || [];
-     
-     if (index > -1 && index < pastaData.length) {
-         pastaData.splice(index, 1); // Remove the item at the specified index
-         localStorage.setItem('PastaData', JSON.stringify(pastaData));
-         displayPastaData(); // Refresh the table to reflect the changes
-         alert("Item deleted successfully.");
-     } else {
+    if (index > -1 && index < pastaData.length) {
+        pastaData.splice(index, 1); 
+        localStorage.setItem('PastaData', JSON.stringify(pastaData));
+        displayPastaData(); 
+        alert("Item deleted successfully.");
+    } else {
          alert("Invalid item index.");
-     }
- }
-// Function to display data in a table
-function displayBurgerData() {
-    const burgerData = JSON.parse(localStorage.getItem('burgerData')) || [];
-    const tableBody = document.getElementById("burgerTableBody");
-
-    tableBody.innerHTML = "";
-    burgerData.forEach((burger, index) => {
-        const row = tableBody.insertRow();
-        row.insertCell(0).textContent = burger.itemCode;
-        row.insertCell(1).textContent = burger.itemName;
-        row.insertCell(2).textContent = burger.price;
-        row.insertCell(3).textContent = burger.Qty;
-        if(burger.discount==0){
-            row.insertCell(4).textContent = '-';
-        }else{
-            row.insertCell(4).textContent = burger.discount;
-        }
-       
-        const editCell = row.insertCell(5);
-        editCell.innerHTML = `<button class="edit-button" onclick="editItem(${index})">Edit</button>`;
-        const buyCell = row.insertCell(6);
-        buyCell.innerHTML = `<button class="buy-button" onclick="buyItem('${burger.itemCode}', '${burger.price}', '${burger.discount}')">Buy Now</button>`;
-        const deleteCell = row.insertCell(7);
-        deleteCell.innerHTML = `<button class="delete-button" onclick="deleteItem(${index})">Delete</button>`;
-    });
+    }
 }
-// document.addEventListener('DOMContentLoaded', function() {
-//     displayBurgerData();
-// });
-if(document.getElementById("burgerTableBody") !=null){displayBurgerData();}
 
-// Function to update an item
+//---------------------------------Add Item Buttons Funtion-------------------------------
+    //----------------add Beverage------------------------------------------------
+function addBeverage(){
+    const itemCode = document.getElementById("addItemCodeBeverage").value;
+    const itemName = document.getElementById("addItemNameBeverage").value;
+    const price = document.getElementById("addPriceBeverage").value;
+    const discount = document.getElementById("addDiscountBeverage").value;
+
+    const BeverageData= JSON.parse(localStorage.getItem('Beverages')) || [];
+    const newItem = { itemCode, itemName, price, discount: discount || "-" };
+      BeverageData.push(newItem);
+    localStorage.setItem('Beverages', JSON.stringify(BeverageData));
+	 displayBeveragesData();
+}
+    //----------------add Chicken------------------------------------------------
+function addChicken(){
+    const itemCode = document.getElementById("addItemCodeChicken").value;
+    const itemName = document.getElementById("addItemNameChicken").value;
+    const price = document.getElementById("addPriceChicken").value;
+    const discount = document.getElementById("addDiscountChicken").value;
+
+    const chickenData= JSON.parse(localStorage.getItem('ChickenData')) || [];
+    const newItem = { itemCode, itemName, price, discount: discount || "-" };
+     chickenData.push(newItem);
+    localStorage.setItem('ChickenData', JSON.stringify(chickenData));
+    displayChickenData();
+}
+    //----------------add Burger------------------------------------------------
+function addItem() {
+    const itemCode = document.getElementById("addItemCode").value;
+    const itemName = document.getElementById("addItemName").value;
+    const price = document.getElementById("addPrice").value;
+    const discount = document.getElementById("addDiscount").value;
+
+    const burgerData = JSON.parse(localStorage.getItem('burgerData')) || [];
+    const newItem = { itemCode, itemName, price, discount: discount || "-" };
+    burgerData.push(newItem);
+    localStorage.setItem('burgerData', JSON.stringify(burgerData));
+    displayBurgerData();
+}
+    //----------------add Submarine------------------------------------------------
+function addSubmarine(){
+    const itemCode = document.getElementById("addItemCodeSub").value;
+    const itemName = document.getElementById("addItemNameSub").value;
+    const price = document.getElementById("addPriceSub").value;
+    const discount = document.getElementById("addDiscountSub").value;
+
+    const submarineData = JSON.parse(localStorage.getItem('SubmarineData')) || [];
+    const newItem = { itemCode, itemName, price, discount: discount || "-" };
+    submarineData.push(newItem);
+    localStorage.setItem('SubmarineData', JSON.stringify(submarineData));
+    displaySubmarineData();
+}
+    //----------------add Fries------------------------------------------------
+function addFries(){
+    const itemCode = document.getElementById("addItemCodeFry").value;
+    const itemName = document.getElementById("addItemNameFry").value;
+    const price = document.getElementById("addPriceFry").value;
+    const discount = document.getElementById("addDiscountFry").value;
+
+    const friesData= JSON.parse(localStorage.getItem('FriesData')) || [];
+    const newItem = { itemCode, itemName, price, discount: discount || "-" };
+    friesData.push(newItem);
+    localStorage.setItem('FriesData', JSON.stringify(friesData));
+    displayFriesData();
+}
+    //----------------add Pasta------------------------------------------------
+function addPasta(){
+    const itemCode = document.getElementById("addItemCodePasta").value;
+    const itemName = document.getElementById("addItemNamePasta").value;
+    const price = document.getElementById("addPricePasta").value;
+    const discount = document.getElementById("addDiscountPasta").value;
+
+    const pastaData= JSON.parse(localStorage.getItem('PastaData')) || [];
+    const newItem = { itemCode, itemName, price, discount: discount || "-" };
+    pastaData.push(newItem);
+    localStorage.setItem('PastaData', JSON.stringify(pastaData));
+  displayPastaData();
+}
+
+// ---------------------------Buy Now Buttons Funtion-------------------------------------------------
+function buyItem(itemCode, price, discount) {
+    window.location.href = `placeOrder.html?itemCode=${encodeURIComponent(itemCode)}&price=${encodeURIComponent(price)}&discount=${encodeURIComponent(discount)}`;
+
+    
+}
+
+//------------------------updateitem.html File js----------------------------------------
+    //----------------------Update Item Button Function---------------------------------------
 function updateItem() {
     const itemCode = document.getElementById("updateItemCode").value;
     const newPrice = document.getElementById("updatePrice").value;
@@ -653,187 +761,39 @@ function updateItem() {
     if (itemIndex !== -1) {
         burgerData[itemIndex].price = newPrice;
         burgerData[itemIndex].discount = newDiscount || "-";
-        localStorage.setItem('burgerData', JSON.stringify(burgerData));
-      
-        //displayBurgerData();
-        alert("Wade goda");
-        // document.getElementById("message").innerHTML=(" Contagulations You Won 😃")   
-    console.log("Hii");
-    }    else if (SubIndex !== -1) {
+        localStorage.setItem('burgerData', JSON.stringify(burgerData));;
+        alert("Item Updated SuccesFully!!!!!!!");   
+    }else if (SubIndex !== -1) {
         submarineData[SubIndex].price = newPrice;
         submarineData[SubIndex].discount = newDiscount || "-";
         localStorage.setItem('SubmarineData', JSON.stringify(submarineData));
-      
-        //displayBurgerData();
-        alert("Wade hri");
-        // document.getElementById("message").innerHTML=(" Contagulations You Won 😃")   
-    console.log("Hii");
+        alert("Item Updated SuccesFully!!!!!!!");
     }else if (FryIndex !== -1) {
         friesDta[FryIndex].price = newPrice;
         friesDta[FryIndex].discount = newDiscount || "-";
         localStorage.setItem('FriesData', JSON.stringify(friesDta));
-      
-        //displayBurgerData();
-        alert("Wade hri");
-        // document.getElementById("message").innerHTML=(" Contagulations You Won 😃")   
-    console.log("Hii");
-    } else if (PastaIndex !== -1) {
+        alert("Item Updated SuccesFully!!!!!!!");
+    }else if (PastaIndex !== -1) {
         pastaData[PastaIndex].price = newPrice;
         pastaData[PastaIndex].discount = newDiscount || "-";
         localStorage.setItem('PastaData', JSON.stringify(pastaData));
-      
-        //displayBurgerData();
+        alert("Item Updated SuccesFully!!!!!!!"); 
+    }else if (ChickenIndex !== -1) {
+        chickenData[ChickenIndex].price = newPrice;
+        chickenData[ChickenIndex].discount = newDiscount || "-";
+        localStorage.setItem('ChickenData', JSON.stringify(chickenData));
+        alert("Item Updated SuccesFully!!!!!!!");
+    }else if (BeverageIndex !== -1) {
+        BeverageData[BeverageIndex].price = newPrice;
+        BeverageData[BeverageIndex].discount = newDiscount || "-";
+        localStorage.setItem('Beverages', JSON.stringify(BeverageData));
         alert("Wade hri");
-        // document.getElementById("message").innerHTML=(" Contagulations You Won 😃")   
-    console.log("Hii");
-   
-} else if (ChickenIndex !== -1) {
-    chickenData[ChickenIndex].price = newPrice;
-    chickenData[ChickenIndex].discount = newDiscount || "-";
-    localStorage.setItem('ChickenData', JSON.stringify(chickenData));
-  
-    //displayBurgerData();
-    alert("Wade hri");
-    // document.getElementById("message").innerHTML=(" Contagulations You Won 😃")   
-console.log("Hii");
-} else if (BeverageIndex !== -1) {
-    BeverageData[BeverageIndex].price = newPrice;
-    BeverageData[BeverageIndex].discount = newDiscount || "-";
-    localStorage.setItem('Beverages', JSON.stringify(BeverageData));
-  
-    //displayBurgerData();
-    alert("Wade hri");
-    // document.getElementById("message").innerHTML=(" Contagulations You Won 😃")   
-console.log("Hii");
-}else {
-alert("Item not found");
-}
-}
-
-// Function to add a new item
-
-function addBeverage(){
-    const itemCode = document.getElementById("addItemCodeBeverage").value;
-    const itemName = document.getElementById("addItemNameBeverage").value;
-    const price = document.getElementById("addPriceBeverage").value;
-    const discount = document.getElementById("addDiscountBeverage").value;
-
-    const BeverageData= JSON.parse(localStorage.getItem('Beverages')) || [];
-    const newItem = { itemCode, itemName, price, discount: discount || "-" };
-      BeverageData.push(newItem);
-    localStorage.setItem('Beverages', JSON.stringify(BeverageData));
-	 displayBeveragesData();
-}
-function addChicken(){
-    const itemCode = document.getElementById("addItemCodeChicken").value;
-    const itemName = document.getElementById("addItemNameChicken").value;
-    const price = document.getElementById("addPriceChicken").value;
-    const discount = document.getElementById("addDiscountChicken").value;
-
-    const chickenData= JSON.parse(localStorage.getItem('ChickenData')) || [];
-    const newItem = { itemCode, itemName, price, discount: discount || "-" };
-     chickenData.push(newItem);
-    localStorage.setItem('ChickenData', JSON.stringify(chickenData));
-    displayChickenData();
-}
-function addItem() {
-    const itemCode = document.getElementById("addItemCode").value;
-    const itemName = document.getElementById("addItemName").value;
-    const price = document.getElementById("addPrice").value;
-    const discount = document.getElementById("addDiscount").value;
-
-    const burgerData = JSON.parse(localStorage.getItem('burgerData')) || [];
-    const newItem = { itemCode, itemName, price, discount: discount || "-" };
-    burgerData.push(newItem);
-    localStorage.setItem('burgerData', JSON.stringify(burgerData));
-    displayBurgerData();
-}
-function addSubmarine(){
-    const itemCode = document.getElementById("addItemCodeSub").value;
-    const itemName = document.getElementById("addItemNameSub").value;
-    const price = document.getElementById("addPriceSub").value;
-    const discount = document.getElementById("addDiscountSub").value;
-
-    const submarineData = JSON.parse(localStorage.getItem('SubmarineData')) || [];
-    const newItem = { itemCode, itemName, price, discount: discount || "-" };
-    submarineData.push(newItem);
-    localStorage.setItem('SubmarineData', JSON.stringify(submarineData));
-    displaySubmarineData();
-}
-function addFries(){
-    const itemCode = document.getElementById("addItemCodeFry").value;
-    const itemName = document.getElementById("addItemNameFry").value;
-    const price = document.getElementById("addPriceFry").value;
-    const discount = document.getElementById("addDiscountFry").value;
-
-    const friesData= JSON.parse(localStorage.getItem('FriesData')) || [];
-    const newItem = { itemCode, itemName, price, discount: discount || "-" };
-    friesData.push(newItem);
-    localStorage.setItem('FriesData', JSON.stringify(friesData));
-    displayFriesData();
-}
-function addPasta(){
-    const itemCode = document.getElementById("addItemCodePasta").value;
-    const itemName = document.getElementById("addItemNamePasta").value;
-    const price = document.getElementById("addPricePasta").value;
-    const discount = document.getElementById("addDiscountPasta").value;
-
-    const pastaData= JSON.parse(localStorage.getItem('PastaData')) || [];
-    const newItem = { itemCode, itemName, price, discount: discount || "-" };
-    pastaData.push(newItem);
-    localStorage.setItem('PastaData', JSON.stringify(pastaData));
-  displayPastaData();
-}
-
-// Function to populate update form with existing item data for editing
-function editItem(index) {
-    const burgerData = JSON.parse(localStorage.getItem('burgerData')) || [];
-    const item = burgerData[index];
-    
-    // Redirect to the update page with the item data
-    window.location.href = `Update.html?itemCode=${encodeURIComponent(item.itemCode)}&price=${encodeURIComponent(item.price)}&discount=${encodeURIComponent(item.discount)}`;
-}
-
-// Display burger data on page load
-// window.onload = function() {
-//     displayBurgerData();
-// };
-function buyItem(itemCode, price, discount) {
-    window.location.href = `placeOrder.html?itemCode=${encodeURIComponent(itemCode)}&price=${encodeURIComponent(price)}&discount=${encodeURIComponent(discount)}`;
-
-    
-}
-// function removeOrder(orderID) {
-//     let orders = JSON.parse(localStorage.getItem('orders')) || [];
-    
-//     // Check if there are any orders
-//     if (orders.length === 0) {
-//         console.log('No orders found');
-//         return;
-//     }
-    
-//     // Filter out the order with the specified orderID
-//     const newOrders = orders.filter(order => order.orderID !== orderID);
-    
-//     // Save the updated orders back to localStorage
-//     localStorage.setItem('orders', JSON.stringify(newOrders));
-    
-//     console.log('Order removed successfully');
-// }
-// removeOrder(1000); 
-function deleteItem(index) {
-    const burgerData = JSON.parse(localStorage.getItem('burgerData')) || [];
-    
-    if (index > -1 && index < burgerData.length) {
-        burgerData.splice(index, 1); // Remove the item at the specified index
-        localStorage.setItem('burgerData', JSON.stringify(burgerData));
-        displayBurgerData(); // Refresh the table to reflect the changes
-        alert("Item deleted successfully.");
-    } else {
-        alert("Invalid item index.");
+    }else {
+        alert("Item not found");
     }
 }
-// Function to open the modal
+
+
 function openModal() {
     document.getElementById("myModal").style.display = "block";
 }
@@ -872,7 +832,7 @@ function closeBeverages() {
     document.getElementById("myBeverages").style.display = "none";
 }
 
-// Close the modal when clicking outside of it
+
 window.onclick = function(event) {
     if (event.target == document.getElementById("myModal")) {
         closeModal();
@@ -893,15 +853,10 @@ function UpdateDisplayDetails(){
        document.getElementById("QTYTextUpdate").value=customerOrders[0]. orderQty;
        document.getElementById("TotalFeildUpdate").value=customerOrders[0]. total;
 
-     
-      
-
     } else {
         showToast(noItem);
         console.log("No customer found with the given telephone number");
     }
-
-
 }
 
 function setUpdate(){
@@ -934,29 +889,15 @@ function closeAlert() {
     document.getElementById('customAlert').style.display = 'none';
 }
 function SearchFoods(){
-    // const burgerData = JSON.parse(localStorage.getItem('burgerData')) || [];
-    // let searchFood = document.getElementById("SearchFoodTxt").value.trim().toLowerCase();
-    // let Foods = burgerData.filter(food => food.itemName.toLowerCase().includes(searchFood));
-    // if (Foods.length > 0) {
-    //     displaySearchResults(Foods);
-    // } else {
-    //     alert("No matching food items found.");
-    // }
     const query = document.getElementById('SearchFoodTxt').value.toLowerCase();
-
-    // Get all rows in the table body
     const rows = document.querySelectorAll('#burgerTableBody tr');
     const rowsSub = document.querySelectorAll('#SubmarineTableBody tr');
     const rowsFry = document.querySelectorAll('#FriesTableBody tr');
     const rowsPasta = document.querySelectorAll('#PastaTableBody tr');
     const rowsChicken = document.querySelectorAll('#ChickenTableBody tr');
     const rowsBevarage = document.querySelectorAll('#BeveragesTableBody tr');
-    // Loop through all rows
     rows.forEach(row => {
-        // Get the item name from the current row
         const itemName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
-
-        // Show or hide row based on search query
         if (itemName.includes(query)) {
             row.style.display = '';
         } else {
@@ -964,10 +905,7 @@ function SearchFoods(){
         }
     });
     rowsSub.forEach(rowSub => {
-        // Get the item name from the current row
         const itemName = rowSub.querySelector('td:nth-child(2)').textContent.toLowerCase();
-
-        // Show or hide row based on search query
         if (itemName.includes(query)) {
             rowSub.style.display = '';
         } else {
@@ -975,10 +913,7 @@ function SearchFoods(){
         }
     });
     rowsFry.forEach(rowFry => {
-        // Get the item name from the current row
         const itemName = rowFry.querySelector('td:nth-child(2)').textContent.toLowerCase();
-
-        // Show or hide row based on search query
         if (itemName.includes(query)) {
             rowFry.style.display = '';
         } else {
@@ -987,10 +922,7 @@ function SearchFoods(){
     });
 
     rowsPasta.forEach(rowPasta => {
-        // Get the item name from the current row
         const itemName = rowPasta.querySelector('td:nth-child(2)').textContent.toLowerCase();
-
-        // Show or hide row based on search query
         if (itemName.includes(query)) {
             rowPasta.style.display = '';
         } else {
@@ -998,10 +930,7 @@ function SearchFoods(){
         }
     });
     rowsChicken.forEach(rowChicken => {
-        // Get the item name from the current row
         const itemName = rowChicken.querySelector('td:nth-child(2)').textContent.toLowerCase();
-
-        // Show or hide row based on search query
         if (itemName.includes(query)) {
             rowChicken.style.display = '';
         } else {
@@ -1009,10 +938,7 @@ function SearchFoods(){
         }
     });
     rowsBevarage.forEach(rowBevarage => {
-        // Get the item name from the current row
         const itemName = rowBevarage .querySelector('td:nth-child(2)').textContent.toLowerCase();
-
-        // Show or hide row based on search query
         if (itemName.includes(query)) {
             rowBevarage .style.display = '';
         } else {
@@ -1020,36 +946,15 @@ function SearchFoods(){
         }
     });
 }
-// function displaySearchResults(results) {
-//     const resultsTableBody = document.getElementById("searchResultsTableBody");
-    
-//     // Clear previous results
-//     resultsTableBody.innerHTML = "";
-
-//     // Populate table with search results
-//     results.forEach(food => {
-//         const row = resultsTableBody.insertRow();
-//         row.insertCell(0).textContent = food.itemCode;
-//         row.insertCell(1).textContent = food.itemName;
-//         row.insertCell(2).textContent = food.price;
-//         row.insertCell(3).textContent = food.discount || '-';
-//     });
-// }
-
-  if(document.getElementById("TbodyView") !=null){ViewOrders();}
-
+if(document.getElementById("TbodyView") !=null){ViewOrders();}
 
 function ViewOrders(){
     let orders = JSON.parse(localStorage.getItem('orders')) || [];
-   // let customerOrders = orders.filter(order => order.telephone === telephone);
-   // let table = document.getElementById("CustomerDetails");
    let table = document.getElementById("CustomerDetailsView").getElementsByTagName('tbody')[0];
     
-    // Clear previous rows
     table.querySelectorAll('tr').forEach(row => row.remove());
     console.log(JSON.parse(localStorage.getItem('orders')));
 
-    // Populate table with customer orders
     orders.forEach(order => {
         let row = table.insertRow();
         row.insertCell(0).textContent = order.orderID;
@@ -1060,44 +965,30 @@ function ViewOrders(){
         
        
     });
-   
-
 }
 
 if(document.getElementById("TbodyReport") !=null){getReportPage();}
 
 function getReportPage(){
     let orders = JSON.parse(localStorage.getItem('orders')) || [];
-    // let customerOrders = orders.filter(order => order.telephone === telephone);
-    // let table = document.getElementById("CustomerDetails");
     let table = document.getElementById("CustomerDetailsReport").getElementsByTagName('tbody')[0];
-     
-     // Clear previous rows
-     table.querySelectorAll('tr').forEach(row => row.remove());
-     console.log(JSON.parse(localStorage.getItem('orders')));
- 
-     // Populate table with customer orders
-     orders.forEach(order => {
-         let row = table.insertRow();
-         row.insertCell(0).textContent = order.orderID;
-         row.insertCell(1).textContent = order.customerName;
-         row.insertCell(2).textContent = order.orderQty;
-         row.insertCell(3).textContent = order.total;
-         row.insertCell(4).textContent = order.date;
-         
-        
-     });
+    table.querySelectorAll('tr').forEach(row => row.remove());
+    console.log(JSON.parse(localStorage.getItem('orders')));
+    orders.forEach(order => {
+        let row = table.insertRow();
+        row.insertCell(0).textContent = order.orderID;
+        row.insertCell(1).textContent = order.customerName;
+        row.insertCell(2).textContent = order.orderQty;
+        row.insertCell(3).textContent = order.total;
+        row.insertCell(4).textContent = order.date;  
+    });
 }
 function FindBestCustomer(){
-
     console.log("Button Clicked");
     let BestCust=JSON.parse(localStorage.getItem('BestCustArray')) || [];
-
-   
     let highestTotal=0;
     let BestCustomer=null;
     let TeleNum=0;
-
     BestCust.forEach(customer =>{
         let subtotal=parseFloat(customer.subTotal)||0;
         if(subtotal>highestTotal){
@@ -1114,32 +1005,24 @@ function FindBestCustomer(){
     } else {
         console.log("No best customer found.");
     }
-
 }
-
 function getBill(){
     let telephoneNum = encodeURIComponent(document.getElementById("TeleNum").value);
     
     window.location.href = `Search.html?telephoneNum=${telephoneNum}`;
 
 }
-
-
 function SetBill(){
     let OIDCounter = parseInt(localStorage.getItem('OIDCounter')) || 0;
     OIDCounter++;
     localStorage.setItem('OIDCounter', OIDCounter);
     let orders = JSON.parse(localStorage.getItem('orders')) || [];
-    let telephone = document.getElementById("SearchFeild").value; // Assuming telephone is obtained this way
+    let telephone = document.getElementById("SearchFeild").value; 
     let customerOrders = orders.filter(order => order.telephone === telephone);
     let table = document.getElementById("CustomerDetails");
     let SubTotal = 0;
-
-    // Clear previous rows
     table.querySelectorAll('tr:not(:first-child)').forEach(row => row.remove());
-
-    // Populate table with customer orders
-    let tableData = []; // Array to store table data
+    let tableData = []; 
     let customerName = ""; 
     customerOrders.forEach(order => {
         let row = table.insertRow();
@@ -1147,27 +1030,22 @@ function SetBill(){
         row.insertCell(1).textContent = order.orderQty;
         row.insertCell(2).textContent = order.total;
         row.insertCell(3).textContent = order.date;
-
-        // Collect row data into an array
-       
-
         SubTotal += parseFloat(order.total) || 0;
         tableData.push({
             orderID: order.orderID,
             orderQty: order.orderQty,
             total: order.total,
             date: order.date,
-            itemCode: order.itemcode || 'N/A', // Add itemCode if available
-           // Add quantity if available
-            price: order.priceF || '0.00', // Add price if available
-            discount: order.disP || '0.00', // Add discount if available
+            itemCode: order.itemcode || 'N/A', 
+           
+            price: order.priceF || '0.00', 
+            discount: order.disP || '0.00', 
             telephone: telephone,
             customerName: order.customerName,
             SubTot:SubTotal
                     });
     });
 
-    // Store the table data in local storage
     localStorage.setItem('tableData', JSON.stringify(tableData));
    
     generatePDF();
@@ -1187,23 +1065,3 @@ function clearFields() {
     localStorage.removeItem('customerInfo');
    
 }
-// Function to handle radio button change
-function handleRoleChange() {
-    const messageElement = document.getElementById('role-message');
-    const selectedRole = document.querySelector('input[name="role"]:checked').value;
-
-    if (selectedRole === 'cashier') {
-        messageElement.textContent = 'Username: Cashier | Password:Cashier1234';
-    
-    } else if (selectedRole === 'admin') {
-        messageElement.textContent = 'Username: Admin | Password:Admin1234';
-    }
-}
-
-// Add event listeners to radio buttons
-document.querySelectorAll('input[name="role"]').forEach(radio => {
-    radio.addEventListener('change', handleRoleChange);
-});
-
-// Initialize message on page load
-handleRoleChange();
