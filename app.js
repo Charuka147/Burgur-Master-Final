@@ -1,3 +1,9 @@
+
+let FinalPrice;
+let DiscountPrs;
+let newusername="";
+let newpassword="";
+
 //------CashierLogin.html file js---------------- 
 const correctUsername = "Cashier";
 const correctPassword = "Cashier12345";
@@ -52,7 +58,211 @@ function adminSignin(event) {
         errorMessage.style.display = "block";
     }
 }
-// -------order.html file js----------------------
+
+let SearchCashierBox=document.getElementById("SearchCashierBox");
+let toastBoxSearch=document.getElementById("toastBoxSearch");
+let toastBox=document.getElementById("toastBox");
+let toastBoxOrder=document.getElementById("toastBoxOrder");
+let successMsg= '<img src="img/righticon.png" > Cashier Added Successfully';
+let cart='<img src="img/righticon.png" > Add To Cart Successfully';
+let noItem='<img src="img/xmark.png" >Check the Phone Number ';
+let CashierNo='<img src="img/xmark.png" >Cashier Not Found ';
+let already='<img src="img/xmark.png" >Cashier Already Exisits ';
+function showToast(msg) {
+
+   let toastBox=document.getElementById("toastBox");
+let toastBoxOrder=document.getElementById("toastBoxOrder");
+let toastBoxSearch=document.getElementById("toastBoxSearch");
+let SearchCashierBox=document.getElementById("SearchCashierBox");
+
+ let toast= document.createElement('div');
+ toast.classList.add('toast');
+ toast.innerHTML=msg;
+
+ if(toastBoxSearch && msg.includes('Check')){
+    toast.classList.add('Check');
+toastBoxSearch.appendChild(toast);
+ }else if(SearchCashierBox && msg.includes('Cashier')){
+    toast.classList.add('Cashier')
+    SearchCashierBox.appendChild(toast);
+ }
+ else if(toastBox && msg.includes('Cashier')){
+    toast.classList.add('Cashier')
+    toastBox.appendChild(toast);
+ }
+ else if (toastBox ) {
+    toastBox.appendChild(toast);
+} else if (toastBoxOrder) {
+    toastBoxOrder.appendChild(toast);
+} else {
+    console.error('Neither toastBox nor toastBoxOrder elements found!');
+}
+
+ setTimeout(()=>{
+    toast.remove();
+
+ },6000)
+
+}
+//------------------------placeOrder.html file js-------------------
+    //---------------------Add To Cart Button Funtion--------------------------
+let OIDCounter = parseInt(localStorage.getItem('OIDCounter')) || 1000;
+
+function Calc() { 
+    showToast(cart);
+    let OIDCounter = parseInt(localStorage.getItem('OIDCounter')) || 1000;
+    let Tot;
+    localStorage.setItem('OIDCounter', OIDCounter);
+
+    let Qty = parseFloat(document.getElementById("QTYText").value);
+    let ItemCode = document.getElementById("ItemCodeText").value;
+    if (DiscountPrs && DiscountPrs > 0 && Qty) {
+        let dis = (FinalPrice * Qty * DiscountPrs) / 100;
+        Tot = (FinalPrice * Qty) - dis;
+    } else if (DiscountPrs === 0 && Qty) {
+        Tot = FinalPrice * Qty;
+    } else {
+        console.log("Invalid input or discount");
+        return;
+    }
+
+    document.getElementById("TotalFeild").value = Tot.toFixed(2);
+    console.log(Tot);
+
+    let Customername = document.getElementById("name").value;
+    localStorage.setItem('Customername', Customername);
+    
+    let TelephoneNum = document.getElementById("TeleNum").value;
+    localStorage.setItem('TelephoneNum', TelephoneNum);
+   
+    let Itemcode=document.getElementById("ItemCodeText").value;
+    localStorage.setItem('Itemcode',Itemcode);
+
+    let price=document.getElementById("PriceText").value;
+    localStorage.setItem(' price', price);
+
+    let dis=document.getElementById("DiscountText").value;
+    localStorage.setItem(' dis', dis);
+
+    
+        localStorage.setItem('Tot', Tot.toFixed(2));
+
+    let orders = JSON.parse(localStorage.getItem('orders')) || [];
+    orders.push({
+        orderID: OIDCounter,
+        orderQty: Qty,
+        total: Tot.toFixed(2),
+        telephone: TelephoneNum,
+        customerName: Customername,
+        priceF:price,
+        disP:dis,
+        itemcode:Itemcode,
+        date: new Date().toLocaleDateString()
+    });
+    localStorage.setItem('orders', JSON.stringify(orders));
+
+    updateItemQuantity(ItemCode, Qty);
+   
+    localStorage.setItem('OIDCounter', OIDCounter);
+    document.getElementById("name").value = Customername;
+    document.getElementById("TeleNum").value = TelephoneNum;
+    localStorage.setItem('customerInfo', JSON.stringify({
+        customerName: Customername,
+        telephone: TelephoneNum
+    }));
+}
+
+    //---------------------------Update Item Quantity Method--------------------------+-
+function updateItemQuantity(itemCode, qtyOrdered) {
+    let burgerData = JSON.parse(localStorage.getItem('burgerData')) || [];
+    let submarineData = JSON.parse(localStorage.getItem('SubmarineData')) || [];
+    let friesData = JSON.parse(localStorage.getItem('FriesData')) || [];
+    let pastaData=JSON.parse(localStorage.getItem('PastaData')) || [];
+       let ChickenData=JSON.parse(localStorage.getItem('ChickenData')) || [];
+    let BeveargesData=JSON.parse(localStorage.getItem('Beverages')) || [];
+    function updateData(data) {
+        let item = data.find(item => item.itemCode === itemCode);
+        if (item) {
+            if (item.Qty >= qtyOrdered) {
+                item.Qty -= qtyOrdered;
+                console.log(`Updated quantity for ${item.itemName}: ${item.Qty}`);
+            } else {
+                console.log(`Not enough stock for ${item.itemName}. Available: ${item.Qty}`);
+            }
+        }
+    }
+    updateData(burgerData);
+    updateData(submarineData);
+    updateData(friesData);
+    updateData(pastaData);
+    updateData(ChickenData);
+    updateData(BeveargesData);
+    localStorage.setItem('burgerData', JSON.stringify(burgerData));
+    localStorage.setItem('SubmarineData', JSON.stringify(submarineData));
+    localStorage.setItem('FriesData', JSON.stringify(friesData));
+    localStorage.setItem('PastaData', JSON.stringify(pastaData));
+    localStorage.setItem('ChickenData', JSON.stringify(ChickenData));
+    localStorage.setItem('Beverages', JSON.stringify(BeveargesData));
+}
+
+function getDetailsCustomer() {
+    let searchValue = document.getElementById("SearchFeild").value;
+    let orders = JSON.parse(localStorage.getItem('orders')) || [];
+    let customerOrders = orders.filter(order => order.telephone === searchValue);
+
+    if (customerOrders.length > 0) {
+        document.getElementById("NameSearchField").value = customerOrders[0].customerName;
+        displayOrderDetails(searchValue);
+    } else {
+        showToast(noItem);
+        console.log("No customer found with the given telephone number");
+    }
+}
+
+function displayOrderDetails(telephone) {
+    let orders = JSON.parse(localStorage.getItem('orders')) || [];
+    let customerOrders = orders.filter(order => order.telephone === telephone);
+    let table = document.getElementById("CustomerDetails");
+    let SubTotal=0;
+    
+    table.querySelectorAll('tr:not(:first-child)').forEach(row => row.remove());
+
+    customerOrders.forEach(order => {
+        let row = table.insertRow();
+        row.insertCell(0).textContent = order.orderID;
+        row.insertCell(1).textContent = order.orderQty;
+        row.insertCell(2).textContent = order.total;
+        row.insertCell(3).textContent = order.date;
+        
+        SubTotal += parseFloat(order.total) || 0;
+    });
+    document.getElementById("SubTotTxt").value = SubTotal.toFixed(2);
+    let CustomerName=customerOrders[0].customerName;
+    let BestCustArray = JSON.parse(localStorage.getItem('BestCustArray')) || [];
+    let bestCustomer = {
+        name: CustomerName,
+        subTotal: SubTotal.toFixed(2),
+        telephone:telephone
+    };
+    BestCustArray.push(bestCustomer);
+
+    localStorage.setItem('BestCustArray', JSON.stringify(BestCustArray));
+}
+
+    
+
+
+function itemview(orderID) {
+    console.log(`View more details for order ID: ${orderID}`);
+}
+function resetOIDCounter() {
+    OIDCounter = 1000; 
+    localStorage.setItem('OIDCounter', OIDCounter);
+    document.getElementById("OIDText").value = OIDCounter; 
+    console.log("OIDCounter reset to", OIDCounter);
+}
+//----------------------order.html file js----------------------------------------------------------
+    //--------------------initial Items for Tables Using Array---------------------------------------------
 const initialBurgerData = [
     { itemCode: "B1001", itemName: "Classic Burger (Large)", price: "750.00", discount: 0,Qty:50 },
     { itemCode: "B1002", itemName: "Classic Burger (Regular)", price: "1500.00", discount: "15%" ,Qty:50},
@@ -118,68 +328,9 @@ const initialBeverages = [
     { itemCode: "B1044", itemName: "Pepsi (330ml)", price: "990.00", discount:"5%",Qty:50 },
     { itemCode: "B1045", itemName: "Coca-Cola (330ml)", price: "1230.00", discount:0 ,Qty:50 },
     { itemCode: "B1046", itemName: "Sprite (330ml)", price: "1500.00", discount:"3%" ,Qty:50  },
+    { itemCode: "B1047", itemName: "Mirinda (330ml)", price: "850.00", discount:"7%",Qty:50 }
    
 ];
-
-//--------Search Food Function-----------------------
-function SearchFoods(){
-    const query = document.getElementById('SearchFoodTxt').value.toLowerCase();
-    const rows = document.querySelectorAll('#burgerTableBody tr');
-    const rowsSub = document.querySelectorAll('#SubmarineTableBody tr');
-    const rowsFry = document.querySelectorAll('#FriesTableBody tr');
-    const rowsPasta = document.querySelectorAll('#PastaTableBody tr');
-    const rowsChicken = document.querySelectorAll('#ChickenTableBody tr');
-    const rowsBevarage = document.querySelectorAll('#BeveragesTableBody tr');
-    rows.forEach(row => {
-        const itemName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
-        if (itemName.includes(query)) {
-            row.style.display = '';
-        } else {
-            row.style.display = 'none';
-        }
-    });
-    rowsSub.forEach(rowSub => {
-        const itemName = rowSub.querySelector('td:nth-child(2)').textContent.toLowerCase();
-        if (itemName.includes(query)) {
-            rowSub.style.display = '';
-        } else {
-            rowSub.style.display = 'none';
-        }
-    });
-    rowsFry.forEach(rowFry => {
-        const itemName = rowFry.querySelector('td:nth-child(2)').textContent.toLowerCase();
-        if (itemName.includes(query)) {
-            rowFry.style.display = '';
-        } else {
-            rowFry.style.display = 'none';
-        }
-    });
-
-    rowsPasta.forEach(rowPasta => {
-        const itemName = rowPasta.querySelector('td:nth-child(2)').textContent.toLowerCase();
-        if (itemName.includes(query)) {
-            rowPasta.style.display = '';
-        } else {
-            rowPasta.style.display = 'none';
-        }
-    });
-    rowsChicken.forEach(rowChicken => {
-        const itemName = rowChicken.querySelector('td:nth-child(2)').textContent.toLowerCase();
-        if (itemName.includes(query)) {
-            rowChicken.style.display = '';
-        } else {
-            rowChicken.style.display = 'none';
-        }
-    });
-    rowsBevarage.forEach(rowBevarage => {
-        const itemName = rowBevarage .querySelector('td:nth-child(2)').textContent.toLowerCase();
-        if (itemName.includes(query)) {
-            rowBevarage .style.display = '';
-        } else {
-            rowBevarage .style.display = 'none';
-        }
-    });
-}
 
 if (!localStorage.getItem('Beverages')) {
     localStorage.setItem('Beverages', JSON.stringify(initialBeverages));
@@ -200,12 +351,11 @@ if (!localStorage.getItem('FriesData')) {
 if (!localStorage.getItem('SubmarineData')) {
     localStorage.setItem('SubmarineData', JSON.stringify(initialSubmarineData));
 }
-
 if (!localStorage.getItem('burgerData')) {
     localStorage.setItem('burgerData', JSON.stringify(initialBurgerData));
 }
 
-//------------------------Display Burgur Data-------------------------------
+    //--------------------------------Display Beverage Date Table--------------------------------------
 function displayBeveragesData(){
     const beveragesData = JSON.parse(localStorage.getItem('Beverages')) || [];
     const beveragesTableBody = document.getElementById("BeveragesTableBody");
@@ -234,7 +384,7 @@ function displayBeveragesData(){
 }
 if(document.getElementById("BeveragesTableBody") !=null){displayBeveragesData();}
 
-//-----------------Display Chicken Data---------------------------
+    //--------------------------Display Chicken Data Table--------------------------------------------
 function displayChickenData(){
     const chickenData = JSON.parse(localStorage.getItem('ChickenData')) || [];
     const chickenTableBody = document.getElementById("ChickenTableBody");
@@ -263,7 +413,7 @@ function displayChickenData(){
 }
 if(document.getElementById("ChickenTableBody") !=null){displayChickenData();}
 
-//---------------------------Display Pasta Data------------------------------
+    //----------------------------------Display Pasta Data Table---------------------------------------------
 function displayPastaData(){
     const pastaData = JSON.parse(localStorage.getItem('PastaData')) || [];
     const pastaTableBody = document.getElementById("PastaTableBody");
@@ -292,7 +442,7 @@ function displayPastaData(){
 }
 if(document.getElementById("PastaTableBody") !=null){displayPastaData();}
 
-//-------------------Display Fries Data-------------------------------
+    //--------------------------Display Fries Data Table----------------------------------------------
 function displayFriesData(){
     const friesData = JSON.parse(localStorage.getItem('FriesData')) || [];
     const friesTableBody = document.getElementById("FriesTableBody");
@@ -321,7 +471,7 @@ function displayFriesData(){
 }
 if(document.getElementById("FriesTableBody") !=null){displayFriesData();}
 
-//---------------------------Display Submarine Data--------------------------
+    //--------------------------------Display Submarine Data Table-------------------------------------------
 function displaySubmarineData(){
     const submarineData = JSON.parse(localStorage.getItem('SubmarineData')) || [];
     const submarineTableBody = document.getElementById("SubmarineTableBody");
@@ -350,57 +500,62 @@ function displaySubmarineData(){
 }
 if(document.getElementById("SubmarineTableBody") !=null){displaySubmarineData();}
 
-//------------------- Edit button funtion-------------
+    //-------------------Edit Berverge--------------------------------------------------------
 function editBeverage(index) {
     const beverageData = JSON.parse(localStorage.getItem('Beverages')) || [];
     const item = beverageData [index];
     window.location.href = `updateitem.html?itemCode=${encodeURIComponent(item.itemCode)}&price=${encodeURIComponent(item.price)}&discount=${encodeURIComponent(item.discount)}`;
 }
+    //----------------Edit Chicken--------------------------------------------------------------
 function editChicken(index) {
     const chickenData = JSON.parse(localStorage.getItem('ChickenData')) || [];
     const item = chickenData [index];
     window.location.href = `updateitem.html?itemCode=${encodeURIComponent(item.itemCode)}&price=${encodeURIComponent(item.price)}&discount=${encodeURIComponent(item.discount)}`;
 }
+    //----------------Edit Pasta--------------------------------------------------------------
 function editPasta(index) {
     const pastaData = JSON.parse(localStorage.getItem('PastaData')) || [];
     const item = pastaData [index];
     window.location.href = `updateitem.html?itemCode=${encodeURIComponent(item.itemCode)}&price=${encodeURIComponent(item.price)}&discount=${encodeURIComponent(item.discount)}`;
 }
+    //----------------Edit Fry--------------------------------------------------------------
 function editFry(index) {
     const friesData = JSON.parse(localStorage.getItem('FriesData')) || [];
     const item = friesData[index];
     window.location.href = `updateitem.html?itemCode=${encodeURIComponent(item.itemCode)}&price=${encodeURIComponent(item.price)}&discount=${encodeURIComponent(item.discount)}`;
 }
+    //----------------Edit Submarine--------------------------------------------------------------
 function editSubmarine(index) {
     const submarineData = JSON.parse(localStorage.getItem('SubmarineData')) || [];
     const item = submarineData[index];
     window.location.href = `updateitem.html?itemCode=${encodeURIComponent(item.itemCode)}&price=${encodeURIComponent(item.price)}&discount=${encodeURIComponent(item.discount)}`;
 }
-//---------------Delete Buttons Functions-----------------------
+    //----------------Delete Beverage--------------------------------------------------------------
 function deleteBeverage(index) {
     const   BeverageData= JSON.parse(localStorage.getItem('Beverages')) || [];
-     
-     if (index > -1 && index <  BeverageData.length) {
+    if (index > -1 && index <  BeverageData.length) {
           BeverageData.splice(index, 1); 
          localStorage.setItem('Beverages', JSON.stringify(BeverageData));
          displayBeveragesData();
          alert("Item deleted successfully.");
-     } else {
+    } else {
          alert("Invalid item index.");
-     }
- }
+    }
+}
+    //----------------Delete Chicken--------------------------------------------------------------
 function deleteChicken(index) {
     const chickenData= JSON.parse(localStorage.getItem('ChickenData')) || [];
      
-     if (index > -1 && index < chickenData.length) {
-         chickenData.splice(index, 1); 
-         localStorage.setItem('ChickenData', JSON.stringify(pastaData));
-         displayChickenData(); 
-         alert("Item deleted successfully.");
-     } else {
+    if (index > -1 && index < chickenData.length) {
+        chickenData.splice(index, 1); 
+        localStorage.setItem('ChickenData', JSON.stringify(pastaData));
+        displayChickenData(); 
+        alert("Item deleted successfully.");
+    } else {
          alert("Invalid item index.");
-     }
- }
+    }
+}
+    //----------------Delete Submarine--------------------------------------------------------------
 function deleteSubmarine(index) {
     const submarineData = JSON.parse(localStorage.getItem('SubmarineData')) || [];
     
@@ -413,19 +568,7 @@ function deleteSubmarine(index) {
         alert("Invalid item index.");
     }
 }
-
-function deleteChicken(index) {
-    const chickenData= JSON.parse(localStorage.getItem('ChickenData')) || [];
-     
-     if (index > -1 && index < chickenData.length) {
-         chickenData.splice(index, 1);
-         localStorage.setItem('ChickenData', JSON.stringify(chickenData));
-         displayChickenData(); 
-         alert("Item deleted successfully.");
-     } else {
-         alert("Invalid item index.");
-     }
- }
+    //----------------Delete Fry--------------------------------------------------------------
 function deleteFry(index) {
     const friesData= JSON.parse(localStorage.getItem('FriesData')) || [];
      
@@ -442,14 +585,15 @@ function deleteFry(index) {
     const pastaData= JSON.parse(localStorage.getItem('PastaData')) || [];
      
      if (index > -1 && index < pastaData.length) {
-         pastaData.splice(index, 1); 
+         pastaData.splice(index, 1); // Remove the item at the specified index
          localStorage.setItem('PastaData', JSON.stringify(pastaData));
-         displayPastaData(); 
+         displayPastaData(); // Refresh the table to reflect the changes
          alert("Item deleted successfully.");
      } else {
          alert("Invalid item index.");
      }
  }
+// Function to display data in a table
 function displayBurgerData() {
     const burgerData = JSON.parse(localStorage.getItem('burgerData')) || [];
     const tableBody = document.getElementById("burgerTableBody");
@@ -475,9 +619,99 @@ function displayBurgerData() {
         deleteCell.innerHTML = `<button class="delete-button" onclick="deleteItem(${index})">Delete</button>`;
     });
 }
+// document.addEventListener('DOMContentLoaded', function() {
+//     displayBurgerData();
+// });
 if(document.getElementById("burgerTableBody") !=null){displayBurgerData();}
 
-//----------------------Add Buttons Function-------------
+// Function to update an item
+function updateItem() {
+    const itemCode = document.getElementById("updateItemCode").value;
+    const newPrice = document.getElementById("updatePrice").value;
+    const newDiscount = document.getElementById("updateDiscount").value;
+
+    const burgerData = JSON.parse(localStorage.getItem('burgerData')) || [];
+    const itemIndex = burgerData.findIndex(burger => burger.itemCode === itemCode);
+   
+    const submarineData=JSON.parse(localStorage.getItem('SubmarineData')) || [];
+    const SubIndex = submarineData.findIndex(submarine => submarine.itemCode === itemCode);
+
+    const friesDta =JSON.parse(localStorage.getItem('FriesData')) || [];
+    const FryIndex= friesDta.findIndex(fry => fry.itemCode === itemCode);
+
+    const pastaData =JSON.parse(localStorage.getItem('PastaData')) || [];
+    const PastaIndex= pastaData.findIndex(pasta => pasta.itemCode === itemCode);
+    
+    
+    
+    const chickenData =JSON.parse(localStorage.getItem('ChickenData')) || [];
+    const ChickenIndex= chickenData.findIndex(chicken => chicken.itemCode === itemCode);
+   
+    const  BeverageData =JSON.parse(localStorage.getItem('Beverages')) || [];
+    const  BeverageIndex= BeverageData.findIndex(Beverage => Beverage.itemCode === itemCode);
+   
+    if (itemIndex !== -1) {
+        burgerData[itemIndex].price = newPrice;
+        burgerData[itemIndex].discount = newDiscount || "-";
+        localStorage.setItem('burgerData', JSON.stringify(burgerData));
+      
+        //displayBurgerData();
+        alert("Wade goda");
+        // document.getElementById("message").innerHTML=(" Contagulations You Won 😃")   
+    console.log("Hii");
+    }    else if (SubIndex !== -1) {
+        submarineData[SubIndex].price = newPrice;
+        submarineData[SubIndex].discount = newDiscount || "-";
+        localStorage.setItem('SubmarineData', JSON.stringify(submarineData));
+      
+        //displayBurgerData();
+        alert("Wade hri");
+        // document.getElementById("message").innerHTML=(" Contagulations You Won 😃")   
+    console.log("Hii");
+    }else if (FryIndex !== -1) {
+        friesDta[FryIndex].price = newPrice;
+        friesDta[FryIndex].discount = newDiscount || "-";
+        localStorage.setItem('FriesData', JSON.stringify(friesDta));
+      
+        //displayBurgerData();
+        alert("Wade hri");
+        // document.getElementById("message").innerHTML=(" Contagulations You Won 😃")   
+    console.log("Hii");
+    } else if (PastaIndex !== -1) {
+        pastaData[PastaIndex].price = newPrice;
+        pastaData[PastaIndex].discount = newDiscount || "-";
+        localStorage.setItem('PastaData', JSON.stringify(pastaData));
+      
+        //displayBurgerData();
+        alert("Wade hri");
+        // document.getElementById("message").innerHTML=(" Contagulations You Won 😃")   
+    console.log("Hii");
+   
+} else if (ChickenIndex !== -1) {
+    chickenData[ChickenIndex].price = newPrice;
+    chickenData[ChickenIndex].discount = newDiscount || "-";
+    localStorage.setItem('ChickenData', JSON.stringify(chickenData));
+  
+    //displayBurgerData();
+    alert("Wade hri");
+    // document.getElementById("message").innerHTML=(" Contagulations You Won 😃")   
+console.log("Hii");
+} else if (BeverageIndex !== -1) {
+    BeverageData[BeverageIndex].price = newPrice;
+    BeverageData[BeverageIndex].discount = newDiscount || "-";
+    localStorage.setItem('Beverages', JSON.stringify(BeverageData));
+  
+    //displayBurgerData();
+    alert("Wade hri");
+    // document.getElementById("message").innerHTML=(" Contagulations You Won 😃")   
+console.log("Hii");
+}else {
+alert("Item not found");
+}
+}
+
+// Function to add a new item
+
 function addBeverage(){
     const itemCode = document.getElementById("addItemCodeBeverage").value;
     const itemName = document.getElementById("addItemNameBeverage").value;
@@ -548,9 +782,58 @@ function addPasta(){
     const newItem = { itemCode, itemName, price, discount: discount || "-" };
     pastaData.push(newItem);
     localStorage.setItem('PastaData', JSON.stringify(pastaData));
-    displayPastaData();
+  displayPastaData();
 }
 
+// Function to populate update form with existing item data for editing
+function editItem(index) {
+    const burgerData = JSON.parse(localStorage.getItem('burgerData')) || [];
+    const item = burgerData[index];
+    
+    // Redirect to the update page with the item data
+    window.location.href = `Update.html?itemCode=${encodeURIComponent(item.itemCode)}&price=${encodeURIComponent(item.price)}&discount=${encodeURIComponent(item.discount)}`;
+}
+
+// Display burger data on page load
+// window.onload = function() {
+//     displayBurgerData();
+// };
+function buyItem(itemCode, price, discount) {
+    window.location.href = `placeOrder.html?itemCode=${encodeURIComponent(itemCode)}&price=${encodeURIComponent(price)}&discount=${encodeURIComponent(discount)}`;
+
+    
+}
+// function removeOrder(orderID) {
+//     let orders = JSON.parse(localStorage.getItem('orders')) || [];
+    
+//     // Check if there are any orders
+//     if (orders.length === 0) {
+//         console.log('No orders found');
+//         return;
+//     }
+    
+//     // Filter out the order with the specified orderID
+//     const newOrders = orders.filter(order => order.orderID !== orderID);
+    
+//     // Save the updated orders back to localStorage
+//     localStorage.setItem('orders', JSON.stringify(newOrders));
+    
+//     console.log('Order removed successfully');
+// }
+// removeOrder(1000); 
+function deleteItem(index) {
+    const burgerData = JSON.parse(localStorage.getItem('burgerData')) || [];
+    
+    if (index > -1 && index < burgerData.length) {
+        burgerData.splice(index, 1); // Remove the item at the specified index
+        localStorage.setItem('burgerData', JSON.stringify(burgerData));
+        displayBurgerData(); // Refresh the table to reflect the changes
+        alert("Item deleted successfully.");
+    } else {
+        alert("Invalid item index.");
+    }
+}
+// Function to open the modal
 function openModal() {
     document.getElementById("myModal").style.display = "block";
 }
@@ -589,83 +872,338 @@ function closeBeverages() {
     document.getElementById("myBeverages").style.display = "none";
 }
 
+// Close the modal when clicking outside of it
 window.onclick = function(event) {
     if (event.target == document.getElementById("myModal")) {
         closeModal();
     }
 };
+function UpdateDisplayDetails(){
+    let searchValue = document.getElementById("SearchFeild").value;
+    let orders = JSON.parse(localStorage.getItem('orders')) || [];
+    let customerOrders = orders.filter(order => order.telephone === searchValue);
+
+    if (customerOrders.length > 0) {
+       document.getElementById("OIDTextUpdate").value=customerOrders[0].orderID;
+       document.getElementById("nameUpdate").value=customerOrders[0].customerName;
+       document.getElementById("TeleNumUpdate").value=customerOrders[0]. telephone;
+       document.getElementById("ItemCodeTextUpdate").value=customerOrders[0].itemcode ;
+       document.getElementById("PriceTextUpdate").value=customerOrders[0]. priceF;
+       document.getElementById("DiscountTextUpdate").value=customerOrders[0]. disP;
+       document.getElementById("QTYTextUpdate").value=customerOrders[0]. orderQty;
+       document.getElementById("TotalFeildUpdate").value=customerOrders[0]. total;
+
+     
+      
+
+    } else {
+        showToast(noItem);
+        console.log("No customer found with the given telephone number");
+    }
 
 
-//------------updateitem.html file js-----------
-function updateItem() {
-    const itemCode = document.getElementById("updateItemCode").value;
-    const newPrice = document.getElementById("updatePrice").value;
-    const newDiscount = document.getElementById("updateDiscount").value;
+}
 
-    const burgerData = JSON.parse(localStorage.getItem('burgerData')) || [];
-    const itemIndex = burgerData.findIndex(burger => burger.itemCode === itemCode);
-   
-    const submarineData=JSON.parse(localStorage.getItem('SubmarineData')) || [];
-    const SubIndex = submarineData.findIndex(submarine => submarine.itemCode === itemCode);
+function setUpdate(){
+    const OID=document.getElementById("OIDTextUpdate").value;
+    const newName=document.getElementById("nameUpdate").value;
+    const newTeleNum=document.getElementById("TeleNumUpdate").value;
 
-    const friesDta =JSON.parse(localStorage.getItem('FriesData')) || [];
-    const FryIndex= friesDta.findIndex(fry => fry.itemCode === itemCode);
-
-    const pastaData =JSON.parse(localStorage.getItem('PastaData')) || [];
-    const PastaIndex= pastaData.findIndex(pasta => pasta.itemCode === itemCode);
+    const orderData=JSON.parse(localStorage.getItem('orders')) || [];
     
-    
-    
-    const chickenData =JSON.parse(localStorage.getItem('ChickenData')) || [];
-    const ChickenIndex= chickenData.findIndex(chicken => chicken.itemCode === itemCode);
+ const Index = orderData.findIndex(data => data.orderID == OID);
+ if (Index !== -1) {
+     orderData[Index].customerName = newName;
+     orderData[Index].telephone = newTeleNum;
+     localStorage.setItem('orders', JSON.stringify(orderData));
    
-    const  BeverageData =JSON.parse(localStorage.getItem('Beverages')) || [];
-    const  BeverageIndex= BeverageData.findIndex(Beverage => Beverage.itemCode === itemCode);
+     showAlert("Order details updated successfully!");
+     console.log("Order updated:", orderData[Index]);
    
-    if (itemIndex !== -1) {
-        burgerData[itemIndex].price = newPrice;
-        burgerData[itemIndex].discount = newDiscount || "-";
-        localStorage.setItem('burgerData', JSON.stringify(burgerData));
-        alert("Item Edit Succesfully!!");  
-    }else if (SubIndex !== -1) {
-        submarineData[SubIndex].price = newPrice;
-        submarineData[SubIndex].discount = newDiscount || "-";
-        localStorage.setItem('SubmarineData', JSON.stringify(submarineData));
-        alert("Item Edit Succesfully!!");
-    }else if (FryIndex !== -1) {
-        friesDta[FryIndex].price = newPrice;
-        friesDta[FryIndex].discount = newDiscount || "-";
-        localStorage.setItem('FriesData', JSON.stringify(friesDta));
-        alert("Item Edit Succesfully!!"); 
-    } else if (PastaIndex !== -1) {
-        pastaData[PastaIndex].price = newPrice;
-        pastaData[PastaIndex].discount = newDiscount || "-";
-        localStorage.setItem('PastaData', JSON.stringify(pastaData));
-        alert("Item Edit Succesfully!!");  
-    } else if (ChickenIndex !== -1) {
-        chickenData[ChickenIndex].price = newPrice;
-        chickenData[ChickenIndex].discount = newDiscount || "-";
-        localStorage.setItem('ChickenData', JSON.stringify(chickenData));
-        alert("Wade hri");
-    } else if (BeverageIndex !== -1) {
-        BeverageData[BeverageIndex].price = newPrice;
-        BeverageData[BeverageIndex].discount = newDiscount || "-";
-        localStorage.setItem('Beverages', JSON.stringify(BeverageData));
-        alert("Item Edit Succesfully!!");   
-    }else {
-        alert("Item not found");
+ } else {
+     alert("Item not found");
+ }
+
+}
+function showAlert(message) {
+    document.getElementById('alertMessage').textContent = message;
+    document.getElementById('customAlert').style.display = 'block';
+}
+
+function closeAlert() {
+    document.getElementById('customAlert').style.display = 'none';
+}
+function SearchFoods(){
+    // const burgerData = JSON.parse(localStorage.getItem('burgerData')) || [];
+    // let searchFood = document.getElementById("SearchFoodTxt").value.trim().toLowerCase();
+    // let Foods = burgerData.filter(food => food.itemName.toLowerCase().includes(searchFood));
+    // if (Foods.length > 0) {
+    //     displaySearchResults(Foods);
+    // } else {
+    //     alert("No matching food items found.");
+    // }
+    const query = document.getElementById('SearchFoodTxt').value.toLowerCase();
+
+    // Get all rows in the table body
+    const rows = document.querySelectorAll('#burgerTableBody tr');
+    const rowsSub = document.querySelectorAll('#SubmarineTableBody tr');
+    const rowsFry = document.querySelectorAll('#FriesTableBody tr');
+    const rowsPasta = document.querySelectorAll('#PastaTableBody tr');
+    const rowsChicken = document.querySelectorAll('#ChickenTableBody tr');
+    const rowsBevarage = document.querySelectorAll('#BeveragesTableBody tr');
+    // Loop through all rows
+    rows.forEach(row => {
+        // Get the item name from the current row
+        const itemName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+
+        // Show or hide row based on search query
+        if (itemName.includes(query)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+    rowsSub.forEach(rowSub => {
+        // Get the item name from the current row
+        const itemName = rowSub.querySelector('td:nth-child(2)').textContent.toLowerCase();
+
+        // Show or hide row based on search query
+        if (itemName.includes(query)) {
+            rowSub.style.display = '';
+        } else {
+            rowSub.style.display = 'none';
+        }
+    });
+    rowsFry.forEach(rowFry => {
+        // Get the item name from the current row
+        const itemName = rowFry.querySelector('td:nth-child(2)').textContent.toLowerCase();
+
+        // Show or hide row based on search query
+        if (itemName.includes(query)) {
+            rowFry.style.display = '';
+        } else {
+            rowFry.style.display = 'none';
+        }
+    });
+
+    rowsPasta.forEach(rowPasta => {
+        // Get the item name from the current row
+        const itemName = rowPasta.querySelector('td:nth-child(2)').textContent.toLowerCase();
+
+        // Show or hide row based on search query
+        if (itemName.includes(query)) {
+            rowPasta.style.display = '';
+        } else {
+            rowPasta.style.display = 'none';
+        }
+    });
+    rowsChicken.forEach(rowChicken => {
+        // Get the item name from the current row
+        const itemName = rowChicken.querySelector('td:nth-child(2)').textContent.toLowerCase();
+
+        // Show or hide row based on search query
+        if (itemName.includes(query)) {
+            rowChicken.style.display = '';
+        } else {
+            rowChicken.style.display = 'none';
+        }
+    });
+    rowsBevarage.forEach(rowBevarage => {
+        // Get the item name from the current row
+        const itemName = rowBevarage .querySelector('td:nth-child(2)').textContent.toLowerCase();
+
+        // Show or hide row based on search query
+        if (itemName.includes(query)) {
+            rowBevarage .style.display = '';
+        } else {
+            rowBevarage .style.display = 'none';
+        }
+    });
+}
+// function displaySearchResults(results) {
+//     const resultsTableBody = document.getElementById("searchResultsTableBody");
+    
+//     // Clear previous results
+//     resultsTableBody.innerHTML = "";
+
+//     // Populate table with search results
+//     results.forEach(food => {
+//         const row = resultsTableBody.insertRow();
+//         row.insertCell(0).textContent = food.itemCode;
+//         row.insertCell(1).textContent = food.itemName;
+//         row.insertCell(2).textContent = food.price;
+//         row.insertCell(3).textContent = food.discount || '-';
+//     });
+// }
+
+  if(document.getElementById("TbodyView") !=null){ViewOrders();}
+
+
+function ViewOrders(){
+    let orders = JSON.parse(localStorage.getItem('orders')) || [];
+   // let customerOrders = orders.filter(order => order.telephone === telephone);
+   // let table = document.getElementById("CustomerDetails");
+   let table = document.getElementById("CustomerDetailsView").getElementsByTagName('tbody')[0];
+    
+    // Clear previous rows
+    table.querySelectorAll('tr').forEach(row => row.remove());
+    console.log(JSON.parse(localStorage.getItem('orders')));
+
+    // Populate table with customer orders
+    orders.forEach(order => {
+        let row = table.insertRow();
+        row.insertCell(0).textContent = order.orderID;
+        row.insertCell(1).textContent = order.customerName;
+        row.insertCell(2).textContent = order.orderQty;
+        row.insertCell(3).textContent = order.total;
+        row.insertCell(4).textContent = order.date;
+        
+       
+    });
+   
+
+}
+
+if(document.getElementById("TbodyReport") !=null){getReportPage();}
+
+function getReportPage(){
+    let orders = JSON.parse(localStorage.getItem('orders')) || [];
+    // let customerOrders = orders.filter(order => order.telephone === telephone);
+    // let table = document.getElementById("CustomerDetails");
+    let table = document.getElementById("CustomerDetailsReport").getElementsByTagName('tbody')[0];
+     
+     // Clear previous rows
+     table.querySelectorAll('tr').forEach(row => row.remove());
+     console.log(JSON.parse(localStorage.getItem('orders')));
+ 
+     // Populate table with customer orders
+     orders.forEach(order => {
+         let row = table.insertRow();
+         row.insertCell(0).textContent = order.orderID;
+         row.insertCell(1).textContent = order.customerName;
+         row.insertCell(2).textContent = order.orderQty;
+         row.insertCell(3).textContent = order.total;
+         row.insertCell(4).textContent = order.date;
+         
+        
+     });
+}
+function FindBestCustomer(){
+
+    console.log("Button Clicked");
+    let BestCust=JSON.parse(localStorage.getItem('BestCustArray')) || [];
+
+   
+    let highestTotal=0;
+    let BestCustomer=null;
+    let TeleNum=0;
+
+    BestCust.forEach(customer =>{
+        let subtotal=parseFloat(customer.subTotal)||0;
+        if(subtotal>highestTotal){
+            highestTotal=subtotal;
+            BestCustomer=customer.name;
+            TeleNum=customer.telephone;
+        }
+    });
+    if (BestCustomer) {
+        console.log("Best Customer:", BestCustomer);
+        document.getElementById("BestCustomerTxt").value=BestCustomer;
+        document.getElementById("TelephoneNumberTxt").value=  TeleNum;
+        document.getElementById("AmountTxt").value="Rs."+highestTotal.toFixed(2);
+    } else {
+        console.log("No best customer found.");
+    }
+
+}
+
+function getBill(){
+    let telephoneNum = encodeURIComponent(document.getElementById("TeleNum").value);
+    
+    window.location.href = `Search.html?telephoneNum=${telephoneNum}`;
+
+}
+
+
+function SetBill(){
+    let OIDCounter = parseInt(localStorage.getItem('OIDCounter')) || 0;
+    OIDCounter++;
+    localStorage.setItem('OIDCounter', OIDCounter);
+    let orders = JSON.parse(localStorage.getItem('orders')) || [];
+    let telephone = document.getElementById("SearchFeild").value; // Assuming telephone is obtained this way
+    let customerOrders = orders.filter(order => order.telephone === telephone);
+    let table = document.getElementById("CustomerDetails");
+    let SubTotal = 0;
+
+    // Clear previous rows
+    table.querySelectorAll('tr:not(:first-child)').forEach(row => row.remove());
+
+    // Populate table with customer orders
+    let tableData = []; // Array to store table data
+    let customerName = ""; 
+    customerOrders.forEach(order => {
+        let row = table.insertRow();
+        row.insertCell(0).textContent = order.orderID;
+        row.insertCell(1).textContent = order.orderQty;
+        row.insertCell(2).textContent = order.total;
+        row.insertCell(3).textContent = order.date;
+
+        // Collect row data into an array
+       
+
+        SubTotal += parseFloat(order.total) || 0;
+        tableData.push({
+            orderID: order.orderID,
+            orderQty: order.orderQty,
+            total: order.total,
+            date: order.date,
+            itemCode: order.itemcode || 'N/A', // Add itemCode if available
+           // Add quantity if available
+            price: order.priceF || '0.00', // Add price if available
+            discount: order.disP || '0.00', // Add discount if available
+            telephone: telephone,
+            customerName: order.customerName,
+            SubTot:SubTotal
+                    });
+    });
+
+    // Store the table data in local storage
+    localStorage.setItem('tableData', JSON.stringify(tableData));
+   
+    generatePDF();
+    clearFields(); 
+  
+}
+function clearFields() {
+    console.log('Clear Fields function called');
+    
+   
+    if (localStorage.getItem('customerInfo')) {
+        console.log('customerInfo exists, removing...');
+        localStorage.removeItem('customerInfo');
+    } else {
+        console.log('No customerInfo found in localStorage.');
+    }
+    localStorage.removeItem('customerInfo');
+   
+}
+// Function to handle radio button change
+function handleRoleChange() {
+    const messageElement = document.getElementById('role-message');
+    const selectedRole = document.querySelector('input[name="role"]:checked').value;
+
+    if (selectedRole === 'cashier') {
+        messageElement.textContent = 'Username: Cashier | Password:Cashier1234';
+    
+    } else if (selectedRole === 'admin') {
+        messageElement.textContent = 'Username: Admin | Password:Admin1234';
     }
 }
 
-//---------------------placeOrder.html File js------------------
-    //-----------------resetOrderId Button Function---------------
-function resetOIDCounter() {
-    OIDCounter = 1000; 
-    localStorage.setItem('OIDCounter', OIDCounter);
-    document.getElementById("OIDText").value = OIDCounter; 
-    console.log("OIDCounter reset to", OIDCounter);
-}
+// Add event listeners to radio buttons
+document.querySelectorAll('input[name="role"]').forEach(radio => {
+    radio.addEventListener('change', handleRoleChange);
+});
 
-
-
-
+// Initialize message on page load
+handleRoleChange();
