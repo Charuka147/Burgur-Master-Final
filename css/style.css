@@ -1,5 +1,5 @@
 /*------ set Background photo ---------*/
-body {
+.body {
   font-family: Arial, sans-serif;
       
   position: relative;
@@ -142,4 +142,83 @@ h1 {
   cursor: pointer;
   border-radius: 50px;  
 }
+/* ---------------ReportUI.html File CSS-------------------- */
+#reportBody {
+  font-family: Arial, sans-serif;
+    
+  position: relative;
+  background-image: url('/img/Backgroundphoto.jpg'); 
+  background-size: cover; 
+  background-position: center; 
+  background-repeat: no-repeat; 
+  height: 100vh; 
+  margin: 0;
+}
+
+.heading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center; 
+  margin: 20px; 
+}
+#GetReportHeading{
+  font-family:Alfa Slab One ;
+  font-size:xx-large;
+  text-align: center;
+  color: white;
+  background-color:#F60C0C;
+  padding: 40px 300px; 
+      border-radius: 40px;
+      margin: 0; 
+      display: inline-block; 
   
+}
+#btnMonthlyReport{
+  position: absolute;
+  top: 40%; 
+  left: 50%; 
+  transform: translate(-50%, -50%);
+  background-color: #7B7272;
+  color: white;
+  border: none;
+  padding: 15px 130px; 
+  font-size: 25px;
+  cursor: pointer;
+  border-radius: 50px; 
+
+}
+#btnMonthlyReport:hover{
+  background-color: #D9D9D9;
+}
+#btnBestCustomer{
+  position: absolute; 
+  top:55%; 
+  left: 50%; 
+  transform: translate(-50%, -50%);
+  background-color: #7B7272;
+  color: white;
+  border: none;
+  padding: 15px 130px; 
+  font-size: 25px;
+  cursor: pointer;
+  border-radius: 50px;
+}
+#btnBestCustomer:hover{
+  background-color: #D9D9D9;
+}
+#btnItemsReport{
+  position: absolute; 
+  top: 70%; 
+  left: 50%; 
+  transform: translate(-50%, -50%);
+  background-color: #7B7272;
+  color: white;
+  border: none;
+  padding: 15px 130px; 
+  font-size: 25px;
+  cursor: pointer;
+  border-radius: 50px; 
+}
+#btnItemsReport:hover{
+  background-color: #D9D9D9;
+}

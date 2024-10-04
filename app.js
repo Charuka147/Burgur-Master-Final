@@ -85,7 +85,7 @@ function addCashier() {
     showToast(successMsg);
 }
 //-------------------------SearchCashier.html file js------------------------------------------
-//-----------------Search Cashier Button Function---------------------------------
+    //-----------------Search Cashier Button Function---------------------------------
 function searchCashier() {
     let searchValue = document.getElementById("SearchCashierTxt").value.trim().toLowerCase();
     let cashiers = JSON.parse(localStorage.getItem('cashiers')) || [];
@@ -163,6 +163,7 @@ function deleteCashier() {
     }
 }
 
+//--------------------------------------------------------------------------
 let SearchCashierBox = document.getElementById("SearchCashierBox");
 let toastBoxSearch = document.getElementById("toastBoxSearch");
 let toastBox = document.getElementById("toastBox");
