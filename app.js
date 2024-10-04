@@ -59,6 +59,32 @@ function adminSignin(event) {
     }
 }
 
+//------------------addCashierForm.html file js -------------------------
+function addCashier(){
+    console.log("Button clicked"); 
+    newusername=document.getElementById("CashierNameTxt").value.trim();
+    newpassword=document.getElementById("CashierPasswordTxt").value.trim();
+
+    if (newusername === "" || newpassword === "") {
+        console.log("Username or password cannot be empty.");
+        return;
+    }
+    let cashiers = JSON.parse(localStorage.getItem('cashiers')) || [];
+    const existingCashier = cashiers.find(cashier => cashier.username === newusername);
+    if (existingCashier) {
+        showToast(already)
+        console.log("Cashier username already exists.");
+        return;
+    }
+    cashiers.push({ username: newusername, password: newpassword });
+    localStorage.setItem('cashiers', JSON.stringify(cashiers));
+
+    console.log("Cashier Added Successfully");
+    console.log("Username:", newusername);
+    console.log("Password:", newpassword);
+    showToast(successMsg);
+}
+
 let SearchCashierBox=document.getElementById("SearchCashierBox");
 let toastBoxSearch=document.getElementById("toastBoxSearch");
 let toastBox=document.getElementById("toastBox");

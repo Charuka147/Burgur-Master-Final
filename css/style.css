@@ -1,17 +1,17 @@
 /*------ set Background photo ---------*/
 body {
-    font-family: Arial, sans-serif;
+  font-family: Arial, sans-serif;
       
-    position: relative;
-    background-image: url('/img/Backgroundphoto.jpg'); 
-    background-size: cover; 
-    background-position: center; 
-    background-repeat: no-repeat; 
-    height: 100vh; 
-    margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center
+  position: relative;
+  background-image: url('/img/Backgroundphoto.jpg'); 
+  background-size: cover; 
+  background-position: center; 
+  background-repeat: no-repeat; 
+  height: 100vh; 
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center
 }
 /* ------index.html file CSS------------------ */
 .container {
