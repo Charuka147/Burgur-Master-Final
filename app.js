@@ -204,6 +204,8 @@ if (!localStorage.getItem('SubmarineData')) {
 if (!localStorage.getItem('burgerData')) {
     localStorage.setItem('burgerData', JSON.stringify(initialBurgerData));
 }
+
+//------------------------Display Burgur Data-------------------------------
 function displayBeveragesData(){
     const beveragesData = JSON.parse(localStorage.getItem('Beverages')) || [];
     const beveragesTableBody = document.getElementById("BeveragesTableBody");
@@ -232,6 +234,7 @@ function displayBeveragesData(){
 }
 if(document.getElementById("BeveragesTableBody") !=null){displayBeveragesData();}
 
+//-----------------Display Chicken Data---------------------------
 function displayChickenData(){
     const chickenData = JSON.parse(localStorage.getItem('ChickenData')) || [];
     const chickenTableBody = document.getElementById("ChickenTableBody");
@@ -260,6 +263,7 @@ function displayChickenData(){
 }
 if(document.getElementById("ChickenTableBody") !=null){displayChickenData();}
 
+//---------------------------Display Pasta Data------------------------------
 function displayPastaData(){
     const pastaData = JSON.parse(localStorage.getItem('PastaData')) || [];
     const pastaTableBody = document.getElementById("PastaTableBody");
@@ -288,6 +292,7 @@ function displayPastaData(){
 }
 if(document.getElementById("PastaTableBody") !=null){displayPastaData();}
 
+//-------------------Display Fries Data-------------------------------
 function displayFriesData(){
     const friesData = JSON.parse(localStorage.getItem('FriesData')) || [];
     const friesTableBody = document.getElementById("FriesTableBody");
@@ -316,6 +321,7 @@ function displayFriesData(){
 }
 if(document.getElementById("FriesTableBody") !=null){displayFriesData();}
 
+//---------------------------Display Submarine Data--------------------------
 function displaySubmarineData(){
     const submarineData = JSON.parse(localStorage.getItem('SubmarineData')) || [];
     const submarineTableBody = document.getElementById("SubmarineTableBody");
@@ -344,6 +350,7 @@ function displaySubmarineData(){
 }
 if(document.getElementById("SubmarineTableBody") !=null){displaySubmarineData();}
 
+//------------------- Edit button funtion-------------
 function editBeverage(index) {
     const beverageData = JSON.parse(localStorage.getItem('Beverages')) || [];
     const item = beverageData [index];
@@ -369,6 +376,7 @@ function editSubmarine(index) {
     const item = submarineData[index];
     window.location.href = `updateitem.html?itemCode=${encodeURIComponent(item.itemCode)}&price=${encodeURIComponent(item.price)}&discount=${encodeURIComponent(item.discount)}`;
 }
+//---------------Delete Buttons Functions-----------------------
 function deleteBeverage(index) {
     const   BeverageData= JSON.parse(localStorage.getItem('Beverages')) || [];
      
@@ -469,7 +477,126 @@ function displayBurgerData() {
 }
 if(document.getElementById("burgerTableBody") !=null){displayBurgerData();}
 
-//------------------- Edit button funtion-------------
+//----------------------Add Buttons Function-------------
+function addBeverage(){
+    const itemCode = document.getElementById("addItemCodeBeverage").value;
+    const itemName = document.getElementById("addItemNameBeverage").value;
+    const price = document.getElementById("addPriceBeverage").value;
+    const discount = document.getElementById("addDiscountBeverage").value;
+
+    const BeverageData= JSON.parse(localStorage.getItem('Beverages')) || [];
+    const newItem = { itemCode, itemName, price, discount: discount || "-" };
+      BeverageData.push(newItem);
+    localStorage.setItem('Beverages', JSON.stringify(BeverageData));
+	 displayBeveragesData();
+}
+function addChicken(){
+    const itemCode = document.getElementById("addItemCodeChicken").value;
+    const itemName = document.getElementById("addItemNameChicken").value;
+    const price = document.getElementById("addPriceChicken").value;
+    const discount = document.getElementById("addDiscountChicken").value;
+
+    const chickenData= JSON.parse(localStorage.getItem('ChickenData')) || [];
+    const newItem = { itemCode, itemName, price, discount: discount || "-" };
+     chickenData.push(newItem);
+    localStorage.setItem('ChickenData', JSON.stringify(chickenData));
+    displayChickenData();
+}
+function addItem() {
+    const itemCode = document.getElementById("addItemCode").value;
+    const itemName = document.getElementById("addItemName").value;
+    const price = document.getElementById("addPrice").value;
+    const discount = document.getElementById("addDiscount").value;
+
+    const burgerData = JSON.parse(localStorage.getItem('burgerData')) || [];
+    const newItem = { itemCode, itemName, price, discount: discount || "-" };
+    burgerData.push(newItem);
+    localStorage.setItem('burgerData', JSON.stringify(burgerData));
+    displayBurgerData();
+}
+function addSubmarine(){
+    const itemCode = document.getElementById("addItemCodeSub").value;
+    const itemName = document.getElementById("addItemNameSub").value;
+    const price = document.getElementById("addPriceSub").value;
+    const discount = document.getElementById("addDiscountSub").value;
+
+    const submarineData = JSON.parse(localStorage.getItem('SubmarineData')) || [];
+    const newItem = { itemCode, itemName, price, discount: discount || "-" };
+    submarineData.push(newItem);
+    localStorage.setItem('SubmarineData', JSON.stringify(submarineData));
+    displaySubmarineData();
+}
+function addFries(){
+    const itemCode = document.getElementById("addItemCodeFry").value;
+    const itemName = document.getElementById("addItemNameFry").value;
+    const price = document.getElementById("addPriceFry").value;
+    const discount = document.getElementById("addDiscountFry").value;
+
+    const friesData= JSON.parse(localStorage.getItem('FriesData')) || [];
+    const newItem = { itemCode, itemName, price, discount: discount || "-" };
+    friesData.push(newItem);
+    localStorage.setItem('FriesData', JSON.stringify(friesData));
+    displayFriesData();
+}
+function addPasta(){
+    const itemCode = document.getElementById("addItemCodePasta").value;
+    const itemName = document.getElementById("addItemNamePasta").value;
+    const price = document.getElementById("addPricePasta").value;
+    const discount = document.getElementById("addDiscountPasta").value;
+
+    const pastaData= JSON.parse(localStorage.getItem('PastaData')) || [];
+    const newItem = { itemCode, itemName, price, discount: discount || "-" };
+    pastaData.push(newItem);
+    localStorage.setItem('PastaData', JSON.stringify(pastaData));
+    displayPastaData();
+}
+
+function openModal() {
+    document.getElementById("myModal").style.display = "block";
+}
+function closeModal() {
+    document.getElementById("myModal").style.display = "none";
+}
+function openSubmaine() {
+    document.getElementById("mySub").style.display = "block";
+}
+function closeSubmarine() {
+    document.getElementById("mySub").style.display = "none";
+}
+function openFry() {
+    document.getElementById("myFry").style.display = "block";
+}
+function closeFry() {
+    document.getElementById("myFry").style.display = "none";
+}
+
+function openPasta() {
+    document.getElementById("myPasta").style.display = "block";
+}
+function closePasta() {
+    document.getElementById("myPasta").style.display = "none";
+}
+function openChicken() {
+    document.getElementById("myChicken").style.display = "block";
+}
+function closeChicken() {
+    document.getElementById("myChicken").style.display = "none";
+}
+function openBeverages() {
+    document.getElementById("myBeverages").style.display = "block";
+}
+function closeBeverages() {
+    document.getElementById("myBeverages").style.display = "none";
+}
+
+window.onclick = function(event) {
+    if (event.target == document.getElementById("myModal")) {
+        closeModal();
+    }
+};
+
+
+//------------updateitem.html file js-----------
 function updateItem() {
     const itemCode = document.getElementById("updateItemCode").value;
     const newPrice = document.getElementById("updatePrice").value;
@@ -529,4 +656,16 @@ function updateItem() {
         alert("Item not found");
     }
 }
+
+//---------------------placeOrder.html File js------------------
+    //-----------------resetOrderId Button Function---------------
+function resetOIDCounter() {
+    OIDCounter = 1000; 
+    localStorage.setItem('OIDCounter', OIDCounter);
+    document.getElementById("OIDText").value = OIDCounter; 
+    console.log("OIDCounter reset to", OIDCounter);
+}
+
+
+
 
