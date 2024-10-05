@@ -1,8 +1,9 @@
 function getTableData() {
     let tableData = JSON.parse(localStorage.getItem('tableData')) || [];
-    console.log("Table Data:", tableData); 
-    return tableData; 
+    console.log("Table Data:", tableData);
+    return tableData;
 }
+
 
 function generatePDF() {
     const tableData = getTableData();
@@ -12,21 +13,16 @@ function generatePDF() {
         return;
     }
 
-    tableData.forEach(item => {
-        console.log("Item Data:", item); 
-    });
+    console.log("Generating PDF for the following data:", tableData);
 
     const firstItem = tableData[0] || {};
     const orderId = String(firstItem.orderID || 'N/A');
     const customerName = firstItem.customerName || 'N/A';
-    const telephoneNumber = firstItem.telephoneNumber || 'N/A';
-
+    
     const total = tableData.reduce((sum, item) => {
         const itemTotal = parseFloat(item.total) || 0;
         return sum + itemTotal;
     }, 0);
-
-    const netTotal = total;
 
     const table = tableData.map(item => [
         item.itemCode || 'N/A',
@@ -34,32 +30,11 @@ function generatePDF() {
         (item.price !== undefined && item.price !== null ? parseFloat(item.price).toFixed(2) : '0.00'),
         (item.discount !== undefined && item.discount !== null ? parseFloat(item.discount).toFixed(2) : '0.00'),
         (item.total !== undefined && item.total !== null ? parseFloat(item.total).toFixed(2) : '0.00'),
-      
     ]);
-
-    console.log("Prepared Table Data:", table); 
 
     const prop = {
         outputType: jsPDFInvoiceTemplate.OutputType.Save,
-        returnJsPDFDocObject: true,
         fileName: "Bill_" + orderId + ".pdf",
-        orientationLandscape: false,
-        compress: true,
-        logo: {
-            src: "img/logo.png",
-            type: 'PNG',
-            width: 40,
-            height: 40,
-            margin: { top: -10, left: 0 }
-        },
-        stamp: {
-            inAllPages: true,
-            src: "https://raw.githubusercontent.com/edisonneza/jspdf-invoice-template/demo/images/qr_code.jpg",
-            type: 'JPG',
-            width: 20,
-            height: 20,
-            margin: { top: 0, left: 0 }
-        },
         business: {
             name: "Burger Master",
             address: "No.314/7, Kandy Road, Ja-Ella",
@@ -68,39 +43,27 @@ function generatePDF() {
             website: "www.BurgerMasters.com"
         },
         contact: {
-            label: `Bill for:  ${customerName}\nOrder ID: ${orderId}\nNet Total: ${netTotal.toFixed(2)}\n `
+            label: `Bill for:  ${customerName}\nOrder ID: ${orderId}\nNet Total: ${total.toFixed(2)}\n`
         },
         invoice: {
             invDate: new Date().toLocaleDateString(),
-            headerBorder: false,
-            tableBodyBorder: false,
             header: [
                 { title: "Item Code" },
                 { title: "Quantity" },
                 { title: "Price" },
                 { title: "Discount" },
-                { title: "Total" },
-               
+                { title: "Total" }
             ],
             table: table,
             additionalRows: [
-               
-                
-                {
-                    col1: 'Order ID:',
-                    col2: orderId,
-                    col3: '',
-                    style: { fontSize: 12 }
-                },
                 {
                     col1: 'Total Amount:',
-                    col2: netTotal.toFixed(2),
+                    col2: total.toFixed(2),
                     col3: 'ALL',
                     style: { fontSize: 14, fontWeight: 'bold' }
                 }
-            ],
+            ]
         },
-        
         footer: {
             text: "Thank you for your purchase. The bill is created on a computer and is valid without a signature and stamp."
         },
@@ -108,7 +71,10 @@ function generatePDF() {
         pageLabel: "Page "
     };
 
-    jsPDFInvoiceTemplate.default(prop);
-
-    console.log("PDF Object created");
+    try {
+        jsPDFInvoiceTemplate.default(prop);
+        console.log("PDF generated successfully!");
+    } catch (error) {
+        console.error("Error generating PDF:", error);
+    }
 }

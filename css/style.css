@@ -270,12 +270,147 @@ h1 {
   text-align: left;
 }
 
-
-
 #CustomerDetailsView tr:hover {
   background-color: #f1f1f1;
 }
 
 #CustomerDetailsView th, #CustoustomerDetailsView td {
+  text-align: center;
+}
+
+/* ----------------------------------addCashierForm.html file CSS-------------------------- */
+.AddCasbody{
+  background-color: #353353;
+}
+.input-container {
+  margin-bottom: 20px;
+}
+.CashierNameUpdate {
+  font-size: x-large;
+  font-weight: bolder;
+}
+#HeadingPlaceOrder {
+  font-family: Alfa Slab One;
+  font-size: xx-large;
+  text-align: center;
+  color: white;
+  background-color: #14f60c;
+  padding: 40px 300px;
+  border-radius: 40px;
+  margin: 0;
+  display: inline-block;/
+}
+#AddBtn{
+  margin-top: 10px;
+  margin-left: 300px;
+  padding: 10px 50px;
+  border-radius: 40px;
+  font-size: x-large;
+  background-color: #3EF510;
+}
+#AddBtn:hover{
+  background-color: #D00C0C;
+}
+#CashierBack{
+  padding: 15px  40px;
+  border-radius: 40px;
+  font-size: large;
+  background-color: red;
+}
+
+/* ------------------SearchCahier.html file CSS----------------------------- */
+#CashierName{
+  color: #D35400;
+  font-size: x-large;
+  font-weight: bold;
+  margin-left: 30%;
+}
+#SearchCashierBtn{
+  padding: 10px 20px ;
+  font-size: large;
+  border-radius: 40px;
+  background-color: #3EF510;
+}
+#SearchCashierBtn:hover{
+  background-color: #c40b0b;
+}
+#SearchCashierTxt{
+  padding: 10px 50px;
+  margin-left: 30%;
+  border-radius: 40px;
+}
+#SearchCashierInter{
+  background-color: #ffffff; 
+ border-radius: 8px; 
+ box-shadow: 
+   0 10px 15px rgba(0, 0, 0, 0.3), 
+   0 4px 6px rgba(0, 0, 0, 0.2);
+ padding:90px; 
+ margin: 20px; 
+}
+#CashierPasswordSearch{
+  color: #D35400;
+  font-size: x-large;
+  font-weight: bold;
+  margin-left: 29%;
+}
+#CashierPasswordSearchTxt{
+  padding: 10px 40px;
+  border-radius: 40px;
+}
+#UpdateCashier{
+  margin-left: 40%;
+  padding: 10px 30px ;
+  margin-top: 50px;
+  border-radius: 40px;
+  background-color: #3EF510;
+  font-size: large;
+}
+#DeleteCashier{
+  padding: 10px 30px ;
+  font-size: large;
+  border-radius: 40px;
+  background-color: red;
+  margin-left: 50px;
+}
+.modal {
+  display: none; 
+  position: fixed;
+  z-index: 1000; 
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto; 
+  background-color: rgba(0,0,0,0.5); 
+}
+/* ---------------report.html file css ------------*/
+#CustomerDetailsReport{
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 1em;
+  font-family: 'Arial', sans-serif;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+#CustomerDetailsReport th, #CustomerDetailsReport td {
+  padding: 12px 15px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+#CustomerDetailsReport th {
+  background-color: #009879;
+  color: #ffffff;
+  text-align: left;
+}
+
+
+
+#CustomerDetailsReport tr:hover {
+  background-color: #f1f1f1;
+}
+
+#CustomerDetailsReport th, #CustomerDetailsReport td {
   text-align: center;
 }
